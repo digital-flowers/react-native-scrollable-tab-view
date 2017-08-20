@@ -1,6 +1,5 @@
 const React = require('react');
 const PropTypes = require("prop-types");
-const autobind = require("autobind-decorator");
 const {
   StyleSheet,
   Text,
@@ -10,12 +9,15 @@ const {
 const Button = require('./Button');
 
 class DefaultTabBar extends React.Component {
+  constructor(props) {
+    super(props);
+    this.renderTabOption = this.renderTabOption.bind(this);
+    this.renderTab = this.renderTab.bind(this);
+  }
 
-  @autobind
   renderTabOption(name, page) {
   }
 
-  @autobind
   renderTab(name, page, isTabActive, onPressHandler) {
     const {activeTextColor, inactiveTextColor, textStyle,} = this.props;
     const textColor = isTabActive ? activeTextColor : inactiveTextColor;

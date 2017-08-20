@@ -1,6 +1,5 @@
 const React = require('react');
 const PropTypes = require("prop-types");
-const autobind = require("autobind-decorator");
 const {
   Dimensions,
   View,
@@ -22,6 +21,24 @@ class ScrollableTabView extends React.Component {
     containerWidth: width,
     sceneKeys: this.newSceneKeys({currentPage: this.props.initialPage,}),
   };
+
+  constructor(props) {
+    super(props);
+    this.goToPage = this.goToPage.bind(this);
+    this.renderTabBar = this.renderTabBar.bind(this);
+    this.updateSceneKeys = this.updateSceneKeys.bind(this);
+    this.newSceneKeys = this.newSceneKeys.bind(this);
+    this._shouldRenderSceneKey = this._shouldRenderSceneKey.bind(this);
+    this._keyExists = this._keyExists.bind(this);
+    this._makeSceneKey = this._makeSceneKey.bind(this);
+    this.renderScrollableContent = this.renderScrollableContent.bind(this);
+    this._composeScenes = this._composeScenes.bind(this);
+    this._onMomentumScrollBeginAndEnd = this._onMomentumScrollBeginAndEnd.bind(this);
+    this._updateSelectedPage = this._updateSelectedPage.bind(this);
+    this._onChangeTab = this._onChangeTab.bind(this);
+    this._handleLayout = this._handleLayout.bind(this);
+    this._children = this._children.bind(this);
+  }
 
   componentDidMount() {
     this.setTimeout(() => {
@@ -49,7 +66,6 @@ class ScrollableTabView extends React.Component {
     }
   }
 
-  @autobind
   goToPage(pageNumber, animated = !this.props.scrollWithoutAnimation) {
     const offset = pageNumber * this.state.containerWidth;
     if (this.scrollView && this.scrollView._component && this.scrollView._component.scrollTo) {
@@ -63,7 +79,6 @@ class ScrollableTabView extends React.Component {
     });
   }
 
-  @autobind
   renderTabBar(props) {
     if (this.props.renderTabBar === false) {
       return null;
@@ -74,8 +89,6 @@ class ScrollableTabView extends React.Component {
     }
   }
 
-
-  @autobind
   updateSceneKeys({
                     page, children = this.props.children, callback = () => {
     },
@@ -84,7 +97,6 @@ class ScrollableTabView extends React.Component {
     this.setState({currentPage: page, sceneKeys: newKeys,}, callback);
   }
 
-  @autobind
   newSceneKeys({previousKeys = [], currentPage = 0, children = this.props.children,}) {
     let newKeys = [];
     this._children(children).forEach((child, idx) => {
@@ -97,24 +109,20 @@ class ScrollableTabView extends React.Component {
     return newKeys;
   }
 
-  @autobind
   _shouldRenderSceneKey(idx, currentPageKey) {
     let numOfSibling = this.props.prerenderingSiblingsNumber;
     return (idx < (currentPageKey + numOfSibling + 1) &&
       idx > (currentPageKey - numOfSibling - 1));
   }
 
-  @autobind
   _keyExists(sceneKeys, key) {
     return sceneKeys.find((sceneKey) => key === sceneKey);
   }
 
-  @autobind
   _makeSceneKey(child, idx) {
     return child.props.tabLabel + '_' + idx;
   }
 
-  @autobind
   renderScrollableContent() {
     const scenes = this._composeScenes();
     return <Animated.ScrollView
@@ -147,8 +155,6 @@ class ScrollableTabView extends React.Component {
     </Animated.ScrollView>;
   }
 
-
-  @autobind
   _composeScenes() {
     return this._children().map((child, idx) => {
       let key = this._makeSceneKey(child, idx);
@@ -162,7 +168,6 @@ class ScrollableTabView extends React.Component {
     });
   }
 
-  @autobind
   _onMomentumScrollBeginAndEnd(e) {
     const offsetX = e.nativeEvent.contentOffset.x;
     const page = Math.round(offsetX / this.state.containerWidth);
@@ -171,7 +176,6 @@ class ScrollableTabView extends React.Component {
     }
   }
 
-  @autobind
   _updateSelectedPage(nextPage) {
     let localNextPage = nextPage;
     if (typeof localNextPage === 'object') {
@@ -185,7 +189,6 @@ class ScrollableTabView extends React.Component {
     });
   }
 
-  @autobind
   _onChangeTab(prevPage, currentPage) {
     this.props.onChangeTab({
       i: currentPage,
@@ -194,7 +197,6 @@ class ScrollableTabView extends React.Component {
     });
   }
 
-  @autobind
   _handleLayout(e) {
     const {width,} = e.nativeEvent.layout;
 
@@ -206,11 +208,9 @@ class ScrollableTabView extends React.Component {
     }
   }
 
-  @autobind
   _children(children = this.props.children) {
     return React.Children.map(children, (child) => child);
   }
-
 
   render() {
     let overlayTabs = (this.props.tabBarPosition === 'overlayTop' || this.props.tabBarPosition === 'overlayBottom');

@@ -1,7 +1,6 @@
 const React = require('react');
 const {ViewPropTypes} = ReactNative = require('react-native');
 const PropTypes = require("prop-types");
-const autobind = require("autobind-decorator");
 const {
   View,
   Animated,
@@ -25,6 +24,19 @@ class ScrollableTabBar extends React.Component {
     _containerWidth: null,
   };
 
+
+  constructor(props) {
+    super(props);
+    this.onTabContainerLayout = this.onTabContainerLayout.bind(this);
+    this.onContainerLayout = this.onContainerLayout.bind(this);
+    this.updateView = this.updateView.bind(this);
+    this.necessarilyMeasurementsCompleted = this.necessarilyMeasurementsCompleted.bind(this);
+    this.updateTabPanel = this.updateTabPanel.bind(this);
+    this.updateTabUnderline = this.updateTabUnderline.bind(this);
+    this.renderTab = this.renderTab.bind(this);
+    this.measureTab = this.measureTab.bind(this);
+  }
+
   componentDidMount() {
     this.props.scrollValue.addListener(this.updateView);
   }
@@ -36,7 +48,6 @@ class ScrollableTabBar extends React.Component {
     }
   }
 
-  @autobind
   onTabContainerLayout(e) {
     this._tabContainerMeasurements = e.nativeEvent.layout;
     let width = this._tabContainerMeasurements.width;
@@ -47,13 +58,11 @@ class ScrollableTabBar extends React.Component {
     this.updateView({value: this.props.scrollValue._value,});
   }
 
-  @autobind
   onContainerLayout(e) {
     this._containerMeasurements = e.nativeEvent.layout;
     this.updateView({value: this.props.scrollValue._value,});
   }
 
-  @autobind
   updateView(offset) {
     const position = Math.floor(offset.value);
     const pageOffset = offset.value % 1;
@@ -70,7 +79,6 @@ class ScrollableTabBar extends React.Component {
     }
   }
 
-  @autobind
   necessarilyMeasurementsCompleted(position, isLastTab) {
     return this._tabsMeasurements[position] &&
       (isLastTab || this._tabsMeasurements[position + 1]) &&
@@ -78,7 +86,6 @@ class ScrollableTabBar extends React.Component {
       this._containerMeasurements;
   }
 
-  @autobind
   updateTabPanel(position, pageOffset) {
     const containerWidth = this._containerMeasurements.width;
     const tabWidth = this._tabsMeasurements[position].width;
@@ -102,7 +109,6 @@ class ScrollableTabBar extends React.Component {
 
   }
 
-  @autobind
   updateTabUnderline(position, pageOffset, tabCount) {
     const lineLeft = this._tabsMeasurements[position].left;
     const lineRight = this._tabsMeasurements[position].right;
@@ -122,7 +128,6 @@ class ScrollableTabBar extends React.Component {
     }
   }
 
-  @autobind
   renderTab(name, page, isTabActive, onPressHandler, onLayoutHandler) {
     const {activeTextColor, inactiveTextColor, textStyle,} = this.props;
     const textColor = isTabActive ? activeTextColor : inactiveTextColor;
@@ -144,7 +149,6 @@ class ScrollableTabBar extends React.Component {
     </Button>;
   }
 
-  @autobind
   measureTab(page, event) {
     const {x, width, height,} = event.nativeEvent.layout;
     this._tabsMeasurements[page] = {left: x, right: x + width, width, height,};
