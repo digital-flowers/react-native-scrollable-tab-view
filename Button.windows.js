@@ -1,14 +1,10 @@
 const React = require('react');
-const ReactNative = require('react-native');
-const {
- TouchableOpacity,
-  View,
-} = ReactNative;
+const {TouchableOpacity} = require('react-native');
 
-const Button = (props) => {
-  return <TouchableOpacity {...props}>
+const Button = props => (
+  <TouchableOpacity {...props}>
     {props.children}
-  </TouchableOpacity>;
-};
+  </TouchableOpacity>
+);
 
 module.exports = Button;
